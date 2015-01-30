@@ -12,4 +12,9 @@ public class PlatformInput : MonoBehaviour
     {
         return Input.mousePosition;
     }
+
+    public static bool GetFire()
+    {
+        return Input.GetButton("Fire1");
+    }
 }
