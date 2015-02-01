@@ -1,79 +1,95 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-public class Shoot : MonoBehaviour {
+public class Shoot : MonoBehaviour
+{
 
     public GameObject gunBarrelEnd;
+    public GameObject bullet;
     public float rate = 0.2f;
 
-    private bool isShooting = false;
+    private float timer = 0.0f;
     private Light gunLightEffect;
     private ParticleSystem gunParticleEffect;
     private LineRenderer gunBulletEffect;
     private int layerMask = 0;
-    private float timeDelta = 0;
 
-
-
-	void Start () {
+    void Start() {
         gunLightEffect = gunBarrelEnd.GetComponent<Light>();
         gunParticleEffect = gunBarrelEnd.GetComponent<ParticleSystem>();
         gunBulletEffect = gunBarrelEnd.GetComponent<LineRenderer>();
         layerMask = LayerMask.GetMask("Shootable");
     }
-	
-	// Update is called once per frame
-	void FixedUpdate () {
 
-        if (timeDelta < rate)
-        {
-            gunLightEffect.enabled = false;
-            gunBulletEffect.enabled = false;
-        }
-        else
-        {
-            if (PlatformInput.GetFire())
-            {
-                
+    // Update is called once per frame
+    void Update() {
+
+        timer += Time.deltaTime;
+        if (PlatformInput.GetFire()) {
+            if (timer >= rate) {
+                Fire();
+                Test();
             }
-            else
-            {
-                isShooting = false;
+
+            if (timer > 0.1f) {
+                StopFire();
             }
-            timeDelta = 0;
+        } else {
+            StopFire();
         }
 
-        timeDelta += Time.deltaTime;
-    }
-
-    void Fire()
-    {
-        isShooting = true;
-        gunParticleEffect.Play();
-        gunLightEffect.enabled = isShooting;
         DrawBullet();
     }
 
-    void StopFire()
-    {
-
+    void Fire() { 
+        gunParticleEffect.Play();
+        gunLightEffect.enabled = true;
+    //    gunBulletEffect.enabled = true;
+        DrawBullet();
+        timer = 0.0f;
     }
 
-    void DrawBullet()
-    {
-       // Vector3 offsetFix = new Vector3(0.42f, 0.35f, 0);
+    void StopFire() {
+        gunLightEffect.enabled = false;
+        gunBulletEffect.enabled = false;
+    }
+
+    void DrawBullet() {
+
         Ray shootRay = new Ray();
-       
+
         gunBulletEffect.SetPosition(0, gunBarrelEnd.transform.position);
 
-        shootRay.origin = transform.position;
+        shootRay.origin = gunBarrelEnd.transform.position;
         shootRay.direction = transform.forward;
 
         RaycastHit shootHit;
         if (Physics.Raycast(shootRay, out shootHit, 100, layerMask))
         {
+            // Quaternion q = new Quaternion();
+            // q.SetFromToRotation(gunBarrelEnd.transform.position, shootHit.point);
+
             gunBulletEffect.SetPosition(1, shootHit.point);
-            gunBulletEffect.enabled = true;
         }
+    }
+
+    void Test()
+    {
+        Ray shootRay = new Ray();
+        shootRay.origin = gunBarrelEnd.transform.position;
+        shootRay.direction = transform.forward;
+
+        RaycastHit shootHit;
+        if (Physics.Raycast(shootRay, out shootHit, 100, layerMask))
+        {
+            Vector3 playerToMouse = shootHit.point - transform.position;
+
+            playerToMouse.y = 0;
+            Quaternion newRotatation = Quaternion.LookRotation(playerToMouse);
+            Instantiate(bullet, gunBarrelEnd.transform.position, newRotatation);
+
+        }
+
+
     }
 }
