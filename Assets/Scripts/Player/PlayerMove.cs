@@ -15,6 +15,8 @@ public class PlayerMove : MonoBehaviour
         floorMask = LayerMask.GetMask("Floor");
         animator = GetComponent<Animator>();
         playerHealth = GetComponent<PlayerHealth>();
+
+        PlatformInput.Init();
     }
 
     // Update is called once per frame
@@ -22,13 +24,14 @@ public class PlayerMove : MonoBehaviour
         if (playerHealth.health <= 0)
             return;
 
-        float x = PlatformInput.GetAxis("Horizontal");
-        float z = PlatformInput.GetAxis("Vertical");
+        //float x = PlatformInput.GetAxis("Horizontal");
+        //float z = PlatformInput.GetAxis("Vertical");
+        Vector3 v = PlatformInput.GetMoveDirection();
 
         // 移动角色
-        Movement(x, z);
+        Movement(v.x, v.y);
         Rotate();
-        UpdateAnimateState(x, z);
+        UpdateAnimateState(v.x, v.y);
     }
 
     void Movement(float x, float z) {
@@ -40,13 +43,17 @@ public class PlayerMove : MonoBehaviour
 
     void Rotate() {
         // 第三人称
-
-
+#if UNITY_ANDROID
+        Vector3 v = PlatformInput.GetTargetPosition();
+        Debug.Log(transform.position);
+        Vector3 playerToMouse = new Vector3(v.x, 0, v.y);
+        Quaternion newRotatation = Quaternion.LookRotation(playerToMouse);
+        rigidbody.MoveRotation(newRotatation);
+#else
         Ray cameraRay = Camera.main.ScreenPointToRay(PlatformInput.GetTargetPosition());
         RaycastHit floorHit;
 
-        if (Physics.Raycast(cameraRay, out floorHit, 100, floorMask))
-        {
+        if (Physics.Raycast(cameraRay, out floorHit, 100, floorMask)) {
             Vector3 playerToMouse = floorHit.point - transform.position;
 
             playerToMouse.y = 0;
@@ -56,6 +63,7 @@ public class PlayerMove : MonoBehaviour
             rigidbody.MoveRotation(newRotatation);
             // transform.rotation = newRotatation;
         }
+#endif
     }
 
     void UpdateAnimateState(float x, float z) {
