@@ -5,38 +5,29 @@ public class PlatformInput : MonoBehaviour
 {
     private static Joystick leftController;
     private static Joystick rightController;
-    public static void Init() {
-
-        GameObject obj = GameObject.FindGameObjectWithTag("LeftJoystick");
-        if (obj)
-            leftController = obj.GetComponent<Joystick>();
-
-        obj = GameObject.FindGameObjectWithTag("RightJoystick");
-        if (obj)
-            rightController = obj.GetComponent<Joystick>();
+    public static void Init()
+    {
+        leftController = GameObject.FindGameObjectWithTag("LeftJoystick").GetComponent<Joystick>() ;
+        rightController = GameObject.FindGameObjectWithTag("RightJoystick").GetComponent<Joystick>();
     }
     public static Vector3 GetMoveDirection() {
-        Vector3 v = new Vector3(0, 0, 0);
 #if UNITY_ANDROID
-        if (leftController) {
-            v = leftController.position;
-        }
+       
+        return leftController.position;
 #else
         float x = Input.GetAxis("Horizontal");
         float z = Input.GetAxis("Vertical");
-        v = new Vector3(x, z, 0);
+        return new Vector3(x, 0, z);
 #endif
-        return v;
     }
 
     public static Vector3 GetTargetPosition() {
-        Vector3 v = new Vector3(0, 0, 0);
 #if UNITY_ANDROID
-        v = rightController.position;
+        return rightController.position;
 #else
-        v = Input.mousePosition;
+        return Input.mousePosition;
 #endif
-        return v;
+
     }
 
     public static bool GetFire() {
