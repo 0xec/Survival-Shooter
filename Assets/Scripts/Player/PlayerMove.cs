@@ -45,7 +45,10 @@ public class PlayerMove : MonoBehaviour
         // 第三人称
 #if UNITY_ANDROID
         Vector3 v = PlatformInput.GetTargetPosition();
-        Debug.Log(transform.position);
+     //   Debug.Log(transform.position);
+		if (v == Vector3.zero)
+			v = transform.up;
+
         Vector3 playerToMouse = new Vector3(v.x, 0, v.y);
         Quaternion newRotatation = Quaternion.LookRotation(playerToMouse);
         rigidbody.MoveRotation(newRotatation);
