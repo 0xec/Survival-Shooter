@@ -24,7 +24,7 @@ public class PlayerShoot : MonoBehaviour
     }
 
     // Update is called once per frame
-    void FixedUpdate() {
+    void Update() {
         if (playerHealth.health <= 0)
             return;
 

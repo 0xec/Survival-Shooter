@@ -27,8 +27,7 @@ public class PlayerMove : MonoBehaviour
         //float x = PlatformInput.GetAxis("Horizontal");
         //float z = PlatformInput.GetAxis("Vertical");
         Vector3 v = PlatformInput.GetMoveDirection();
-
-        // 移动角色
+		        // 移动角色
         Movement(v.x, v.y);
         Rotate();
         UpdateAnimateState(v.x, v.y);

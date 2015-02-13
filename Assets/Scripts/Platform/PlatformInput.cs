@@ -25,8 +25,9 @@ public class PlatformInput : MonoBehaviour
     }
 
     public static Vector3 GetTargetPosition() {
-		return new Vector3 (0, 0, 0);
+
 #if UNITY_ANDROID
+		return new Vector3 (0, 0, 0);
         return rightController.position;
 #else
         return Input.mousePosition;
