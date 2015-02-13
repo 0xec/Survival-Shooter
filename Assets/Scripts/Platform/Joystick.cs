@@ -20,7 +20,7 @@ public class Joystick : MonoBehaviour
         mainCamera = GameObject.FindGameObjectWithTag("MainCamera").GetComponent<Camera>();
 
         restorePosition_ = rectTransform.anchoredPosition;
-        print(rectTransform.anchoredPosition);
+       // print(rectTransform.anchoredPosition);
     }
 
     void RestoreJoystickPosition() {
